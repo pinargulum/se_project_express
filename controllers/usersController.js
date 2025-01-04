@@ -1,6 +1,3 @@
-//const exspress = require("exspress");
-//const routes = exspress.Router();
-
 
 
 // GET ALL THE USERS
@@ -13,7 +10,7 @@ const getUser = ((req, res) => {
  });
  // POST NEW USER
 const createUser = ((reg, res) => {
-  res.status(200).json({ message: 'new user is created' });
+  res.status(201).json({ name: 'String', avatar: 'String' });
 });
 
 module.exports = { getUsers, getUser, createUser };
