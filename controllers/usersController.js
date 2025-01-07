@@ -1,22 +1,41 @@
+const User = require('../models/user')
+
 // GET ALL THE USERS
 const getUsers = (req, res) => {
-  res.status(200).json({ message: 'get all users' })
+  User.find({})
+    .then(users => {
+      res.status(200).send(users)
+    })
+    .catch(err => {
+      console.error(err)
+      return res.status(400).send({ message: err.message })
+    })
 }
+
 // GET SINGLE USER
 const getUser = (req, res) => {
-  res.status(200).json({ message: `get user by id ${req.params.id}` })
+  const { userId } = req.param
+  User.findById(userId)
+    .then(users => {
+      res.status(200).send(users)
+    })
+    .catch(err => {
+      console.error(err)
+      return res.status(400).send({ message: err.message })
+    })
 }
+
 // POST NEW USER
 const createUser = (req, res) => {
-
-
-  console.log("The request body is :", req.body);
-  const { name, about, avatar } = req.body;
-  if (!name || !about || !avatar) {
-    res.status(400)
-    //throw new Error('All the fields are mendetory!')
-  }
-  res.status(201).json({ message: "new user created" })
+  const { name, avatar } = req.body
+  User.create({ name, avatar })
+    .then(user => {
+      res.status(201).send(user)
+    })
+    .catch(err => {
+      console.error(err)
+      return res.status(400).send({ message: err.message })
+    })
 }
 
 module.exports = { getUsers, getUser, createUser }
