@@ -4,15 +4,15 @@ const {
   getItems,
   createItem,
   deleteItem
-} = require('../controllers/itemsController')
+} = require('../controllers/clothingItemsController')
 
 //GET ALL THE ITEMS
-router.route('/').get(getItems)
+router.get('/', getItems)
 
 // POST ITEMS
-router.route('/').post(createItem)
+router.post('/', createItem)
 
 //DELETE ITEMS
-router.route('/:id').delete(deleteItem)
+router.delete('/:itemId', deleteItem)
 
 module.exports = router

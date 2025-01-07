@@ -3,6 +3,7 @@ const mainRouter = require("./routes/index")
 const { default: mongoose } = require('mongoose')
 
 
+
 const app = express()
 const { PORT = 3001 } = process.env
 mongoose
@@ -15,6 +16,7 @@ mongoose
 //  USER ROUTERS
 app.use(express.json())
 app.use(('/'), mainRouter)
+
 
 app.use((req, res, next) => {
   req.user = {
