@@ -50,5 +50,25 @@ const updateItem = (req, res) => {
       return res.status(400).send({ message: err.message })
     })
 }
+const likeItem = (req, res) => {
+  const { itemId } = req.params
+  const { name, weather, imageUrl } = req.body
+  ClothingItem.findByIdAndUpdate(itemId, { $set: { name, weather, imageUrl } })
+    .orFail()
+    .then(item => {
+      res.status(200).send({ data: item })
+    })
+    .catch(err => {
+      console.error(err)
+      return res.status(400).send({ message: err.message })
+    })
+}
+module.exports.likeItem = (req, res) => ClothingItem.findByIdAndUpdate(
+  req.params.itemId,
+  { $addToSet: { likes: req.user._id } },
+  { new: true },
+)
 
-module.exports = { getItems, createItem, deleteItem, updateItem }
+
+
+module.exports = { getItems, createItem, deleteItem, updateItem, likeItem }
