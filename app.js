@@ -13,20 +13,19 @@ mongoose
   })
   .catch(console.error)
 
-//  USER ROUTERS
+  app.use((req, res, next) => {
+    req.user = {
+      _id: "677eff3bedb07b69c74b3938"
+    };
+    next();
+  });
+
 app.use(express.json())
 app.use(('/'), mainRouter)
 
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "677c9d34c5d5f511f22eff18"
-  };
-  next();
-});
-module.exports.createItem = (req, res) => {
-  console.log(req.user._id);
-};
+
+
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)
 })

@@ -8,21 +8,31 @@ const getItems = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
+
 // create a new item
 const createItem = (req, res) => {
-  const { name, imageUrl, weather } = req.body
-  ClothingItem.create({ name, imageUrl, weather })
+  const { name, weather, imageUrl } = req.body
+  const owner = req.user._id
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then(item => {
-      res.status(201).send({ data: item })
+      console.log(item)
+      res.status(201).send(item)
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
+
 //delete item by id
 const deleteItem = (req, res) => {
   const { itemId } = req.params
@@ -63,12 +73,18 @@ const likeItem = (req, res) => {
       return res.status(400).send({ message: err.message })
     })
 }
-module.exports.likeItem = (req, res) => ClothingItem.findByIdAndUpdate(
-  req.params.itemId,
-  { $addToSet: { likes: req.user._id } },
-  { new: true },
-)
+const dislikeItem = (req, res) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
 
-
-
-module.exports = { getItems, createItem, deleteItem, updateItem, likeItem }
+module.exports = {
+  getItems,
+  deleteItem,
+  createItem,
+  updateItem,
+  likeItem,
+  dislikeItem
+}
