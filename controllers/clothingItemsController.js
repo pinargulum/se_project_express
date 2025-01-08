@@ -1,9 +1,9 @@
-const clothingItem = require('../models/clothingItems')
+const ClothingItem = require('../models/clothingItems')
 //const ClothingItem = require('../models/clothingItems')
 
 // GET ALL THE USERS
 const getItems = (req, res) => {
-  clothingItem.find({})
+  ClothingItem.find({})
     .then(clothingItems => {
       res.status(200).send(clothingItems)
     })
@@ -15,12 +15,14 @@ const getItems = (req, res) => {
 
 // GET SINGLE USER
 const deleteItem = (req, res) => {
-  const { itemId } = req.param
-  clothingItem.findById(itemId)
-    .then(clothingItems => {
-      res.status(200).send(clothingItems)
-    })
-    .catch(err => {
+  const { itemId } = req.params
+  ClothingItem.findByIdAndDelete(itemId)
+  .orFail()
+  .then((item) => {
+    if (item == null)
+    res.send(item);
+  })
+    .catch((err) => {
       console.error(err)
       return res.status(400).send({ message: err.message })
     })
@@ -29,9 +31,10 @@ const deleteItem = (req, res) => {
 // POST NEW USER
 const createItem = (req, res) => {
   const { name, imageUrl, weather } = req.body
-  clothingItem.create({ name, imageUrl, weather })
-    .then(clothingItem => {
-      res.status(201).send(clothingItem)
+  ClothingItem.create({ name, imageUrl, weather })
+  //console.log(req.user._id)
+    .then(item => {
+      res.status(201).send({data: item})
     })
     .catch(err => {
       console.error(err)

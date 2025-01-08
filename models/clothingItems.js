@@ -10,7 +10,8 @@ const clothingItemSchema = new mongoose.Schema({
   },
   weather: {
     type: String,
-    required: true
+    required: true,
+    
   },
   imageUrl: {
     type: String,
