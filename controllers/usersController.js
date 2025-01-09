@@ -8,11 +8,8 @@ const getUsers = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: "Validation failed" })
-      }
-      res.status(404).send({ message: err.message })
-    })
+        return res.status(400).send({ message: 'Validation failed' })
+      })
 }
 
 // GET SINGLE USER
@@ -24,14 +21,9 @@ const getUser = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (userId === null) {
-        return res.status(404).send({ message: "User not found" })
-      }
-
+        return res.status(404).send({ message: 'User not found' })
       })
-
-    }
-
+}
 
 // POST NEW USER
 const createUser = (req, res) => {
@@ -42,10 +34,7 @@ const createUser = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: "invalid input" })
-      }
-      res.status(500).send({ message: err.message })
+      return res.status(400).send({ message: 'invalid input' })
     })
 }
 
