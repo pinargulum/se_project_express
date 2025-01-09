@@ -1,11 +1,5 @@
 const ClothingItem = require('../models/clothingItems')
-const {
- ValidationError,
- NotFound,
-  serverError
-} = require('../utils/errors')
 
-// get all the items
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then(clothingItems => {
@@ -20,7 +14,6 @@ const getItems = (req, res) => {
     })
 }
 
-// create a new item
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body
   const owner = req.user._id
@@ -38,7 +31,6 @@ const createItem = (req, res) => {
     })
 }
 
-//delete item by id
 const deleteItem = (req, res) => {
   const { itemId } = req.params
   ClothingItem.findByIdAndDelete(itemId)
@@ -50,12 +42,11 @@ const deleteItem = (req, res) => {
       console.error(err)
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
-      } else {
-      res.status(404).send({ message: err.message })
       }
+      res.status(404).send({ message: err.message })
     })
 }
-// update items by id
+
 const updateItem = (req, res) => {
   const { itemId } = req.params
   const { name, weather, imageUrl } = req.body
@@ -83,10 +74,10 @@ const likeItem = (req, res) => {
     .catch(err => {
       console.error(err)
       if (itemId == null) {
-      return res.status(400).send({ message: err.message })
+        return res.status(400).send({ message: err.message })
       }
     })
-  }
+}
 const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -94,12 +85,10 @@ const dislikeItem = (req, res) =>
     { new: true }
   ).catch(err => {
     console.error(err)
-    if (err.name === 'non-existent_id') {
-      return res.status(404).send({ message: err.message })
-    } else {
-    res.status(400).send({ message: err.message })
-    }
-  })
+      return res.status(400).send({ message: err.message })
+    })
+
+
 
 module.exports = {
   getItems,
