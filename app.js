@@ -1,6 +1,7 @@
 const express = require('express')
 const { default: mongoose } = require('mongoose')
 const mainRouter = require("./routes/index")
+const errorHandler = require("./utils/errors")
 
 
 
@@ -23,6 +24,7 @@ mongoose
 
 app.use(express.json())
 app.use(('/'), mainRouter)
+app.use(errorHandler)
 
 
 

@@ -1,32 +1,32 @@
+const errors = {
+  ValidationError: 400,
+  NotFound: 404,
+  ServerError: 500
 
-
-    export const ValidationError = 400;
-    export const NotFound = 404;
-    export const serverError = 500
-    
+}
 
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode ? res.statusCode : 500;
+  const statusCode = res.statusCode ? res.statusCode : 500
   switch (statusCode) {
-    case errorName.VALIDATION_ERROR:
+    case errors.ValidationError:
       res.json({
         title: 'Validation failed',
         message: err.message
       })
       break
-    case errorName.UNAUTHORIZED:
+    case errors.NotFound:
       res.json({
-        title: "Requested resource not found",
+        title: 'Requested resource not found',
         message: err.message
       })
       break
-    case errorName.SERVER_ERROR:
+    case errors.ServerError:
       res.json({
-        title: "Server Error",
+        title: 'Server Error',
         message: err.message
       })
-default:
-break
+    default:
+      break
   }
 }
-//module.exports = errorHandler
+module.exports = errorHandler
