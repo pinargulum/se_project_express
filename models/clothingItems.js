@@ -11,7 +11,12 @@ const clothingItemSchema = new mongoose.Schema({
   weather: {
     type: String,
     required: true,
-    
+
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: user,
+    required: true,
   },
   imageUrl: {
     type: String,

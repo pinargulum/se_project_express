@@ -1,4 +1,5 @@
-const ClothingItem = require('../models/clothingItems')
+const ClothingItem = require('../models/clothingItems');
+const errorType = require("../utils/errors")
 
 // get all the items
 const getItems = (req, res) => {
@@ -26,7 +27,7 @@ const createItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === 'ValidationError') {
+      if (err.name === errorType) {
         return res.status(400).send({ message: err.message })
       }
       res.status(500).send({ message: err.message })
@@ -43,7 +44,10 @@ const deleteItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 // update items by id
