@@ -8,7 +8,10 @@ const getUsers = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 
@@ -21,7 +24,10 @@ const getUser = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 
@@ -34,7 +40,10 @@ const createUser = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 

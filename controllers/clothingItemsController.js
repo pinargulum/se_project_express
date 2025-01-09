@@ -1,5 +1,5 @@
-const ClothingItem = require('../models/clothingItems');
-const errorType = require("../utils/errors")
+const ClothingItem = require('../models/clothingItems')
+const errorType = require('../utils/errors')
 
 // get all the items
 const getItems = (req, res) => {
@@ -27,7 +27,7 @@ const createItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === errorType) {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
       res.status(500).send({ message: err.message })
@@ -61,7 +61,10 @@ const updateItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 const likeItem = (req, res) => {
@@ -74,7 +77,10 @@ const likeItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message })
+      }
+      res.status(500).send({ message: err.message })
     })
 }
 const dislikeItem = (req, res) =>
@@ -83,7 +89,13 @@ const dislikeItem = (req, res) =>
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-
+  .catch(err => {
+    console.error(err)
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: err.message })
+    }
+    res.status(500).send({ message: err.message })
+  })
 module.exports = {
   getItems,
   deleteItem,
