@@ -24,14 +24,14 @@ const getUser = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (!userId) {
+      if (userId === null) {
         return res.status(404).send({ message: "User not found" })
-      } else {
-        res.status(400).send({ message: "invalid user Id" })
       }
 
-    })
-}
+      })
+
+    }
+
 
 // POST NEW USER
 const createUser = (req, res) => {
