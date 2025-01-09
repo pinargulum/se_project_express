@@ -1,8 +1,9 @@
-const errorName = {
-  VALIDATION_ERROR: "400",
-  UNAUTHORIZED: "401",
-  SERVER_ERROR: "500"
-}
+
+
+    export const ValidationError = 400;
+    export const NotFound = 404;
+    export const serverError = 500
+    
 
 const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode ? res.statusCode : 500;

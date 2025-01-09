@@ -1,5 +1,9 @@
 const ClothingItem = require('../models/clothingItems')
-const errorType = require('../utils/errors')
+const {
+ ValidationError,
+ NotFound,
+  serverError
+} = require('../utils/errors')
 
 // get all the items
 const getItems = (req, res) => {
@@ -40,14 +44,15 @@ const deleteItem = (req, res) => {
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then(item => {
-      if (item == null) res.send(item)
+      res.status(200).send(item)
     })
     .catch(err => {
       console.error(err)
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
+      } else {
+      res.status(404).send({ message: err.message })
       }
-      res.status(500).send({ message: err.message })
     })
 }
 // update items by id
@@ -64,7 +69,7 @@ const updateItem = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
-      res.status(500).send({ message: err.message })
+      res.status(404).send({ message: err.message })
     })
 }
 const likeItem = (req, res) => {
@@ -77,25 +82,28 @@ const likeItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message })
+      if (err.name === 'NotFound' && err.name === 'NonExistendId') {
+      return res.status(404).send({ message: err.message })
       }
-      res.status(500).send({ message: err.message })
+      else {
+        res.status(400).send({ message: err.message })
+      }
     })
-}
+  }
 const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
-  )
-  .catch(err => {
+  ).catch(err => {
     console.error(err)
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: err.message })
+    if (err.name === 'non-existent_id') {
+      return res.status(404).send({ message: err.message })
+    } else {
+    res.status(400).send({ message: err.message })
     }
-    res.status(500).send({ message: err.message })
   })
+
 module.exports = {
   getItems,
   deleteItem,
