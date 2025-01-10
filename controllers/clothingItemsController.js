@@ -1,5 +1,11 @@
 const ClothingItem = require('../models/clothingItems')
 
+const {
+  SERVER_ERROR,
+  VALIDATION_ERROR,
+  NOT_FOUND
+} = require('../utils/constants')
+
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then(clothingItems => {
@@ -7,10 +13,9 @@ const getItems = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message })
-      }
-      return res.status(500).send({ message: err.message })
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: 'An error has occurred on the server.' })
     })
 }
 
@@ -26,9 +31,13 @@ const createItem = (req, res) => {
     .catch(err => {
       console.error(err)
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message })
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: 'Please complete all mandatory fields.' })
       }
-      return res.status(500).send({ message: err.message })
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: 'An error has occurred on the server.' })
     })
 }
 
@@ -46,28 +55,21 @@ const deleteItem = (req, res) => {
     .catch(err => {
       console.error(err)
       if (err.name === 'NotFoundError') {
-        return res.status(404).send({ message: err.message })
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'User information not found' })
       }
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'CastError') {
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: 'Please complete all mandatory fields.' })
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: 'An error has occurred on the server.' })
     })
 }
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params
-  const { name, weather, imageUrl } = req.body
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { name, weather, imageUrl } })
-    .orFail()
-    .then(item => {
-      res.status(200).send({ data: item })
-    })
-    .catch(err => {
-      console.error(err)
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message })
-      }
-      return res.status(404).send({ message: err.message })
-    })
-}
 const likeItem = (req, res) => {
   const { itemId } = req.params
   ClothingItem.findByIdAndUpdate(
@@ -86,9 +88,18 @@ const likeItem = (req, res) => {
     .catch(err => {
       console.error(err)
       if (err.name === 'NotFoundError') {
-        return res.status(404).send({ message: err.message })
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'User information not found' })
       }
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'CastError') {
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: 'Please complete all mandatory fields.' })
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: 'An error has occurred on the server.' })
     })
 }
 const dislikeItem = (req, res) => {
@@ -109,9 +120,18 @@ const dislikeItem = (req, res) => {
     .catch(err => {
       console.error(err)
       if (err.name === 'NotFoundError') {
-        return res.status(404).send({ message: err.message })
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'User information not found' })
       }
-      return res.status(400).send({ message: err.message })
+      if (err.name === 'CastError') {
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: 'Please complete all mandatory fields.' })
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: 'An error has occurred on the server.' })
     })
 }
 
@@ -119,7 +139,6 @@ module.exports = {
   getItems,
   deleteItem,
   createItem,
-  updateItem,
   likeItem,
   dislikeItem
 }

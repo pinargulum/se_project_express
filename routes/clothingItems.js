@@ -6,7 +6,6 @@ const {
   getItems,
   createItem,
   deleteItem,
-  updateItem,
   likeItem,
   dislikeItem
 
@@ -15,7 +14,6 @@ const {
 router.get('/', getItems)
 router.post('/', createItem)
 router.delete('/:itemId', deleteItem)
-router.put('/:itemId', updateItem)
 router.put('/:itemId/likes', likeItem)
 router.delete('/:itemId/likes', dislikeItem)
 

@@ -13,7 +13,6 @@ const clothingItemSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 30,
     validate: {
       validator (value) {
         return validator.isURL(value)
@@ -37,9 +36,9 @@ const clothingItemSchema = new mongoose.Schema({
     default: Date.now
   },
   likes: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: user
-  }
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    default: [],
+},
 })
 
 module.exports = mongoose.model('clothingItem', clothingItemSchema)
