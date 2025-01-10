@@ -35,18 +35,18 @@ const createItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params
   ClothingItem.findByIdAndDelete(itemId)
-  .orFail(() => {
-    const error = new Error('item not found');
-    error.name = 'NotFoundError';
-    throw error;
-  })
-    .then((item) => {
+    .orFail(() => {
+      const error = new Error('item not found')
+      error.name = 'NotFoundError'
+      throw error
+    })
+    .then(item => {
       res.status(200).send(item)
     })
     .catch(err => {
       console.error(err)
       if (err.name === 'NotFoundError') {
-      return res.status(404).send({ message: err.message })
+        return res.status(404).send({ message: err.message })
       }
       return res.status(400).send({ message: err.message })
     })
@@ -75,13 +75,20 @@ const likeItem = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
+    .orFail(() => {
+      const error = new Error('item not found')
+      error.name = 'NotFoundError'
+      throw error
+    })
     .then(item => {
       res.status(200).send({ data: item })
     })
     .catch(err => {
       console.error(err)
-      return res.status(404).send({ message: err.message })
+      if (err.name === 'NotFoundError') {
+        return res.status(404).send({ message: err.message })
+      }
+      return res.status(400).send({ message: err.message })
     })
 }
 const dislikeItem = (req, res) => {
@@ -91,13 +98,20 @@ const dislikeItem = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
+    .orFail(() => {
+      const error = new Error('item not found')
+      error.name = 'NotFoundError'
+      throw error
+    })
     .then(item => {
-      res.status(200).send({ data: item })
+      res.status(200).send(item)
     })
     .catch(err => {
       console.error(err)
-      return res.status(404).send({ message: err.message })
+      if (err.name === 'NotFoundError') {
+        return res.status(404).send({ message: err.message })
+      }
+      return res.status(400).send({ message: err.message })
     })
 }
 
