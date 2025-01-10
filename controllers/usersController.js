@@ -28,9 +28,9 @@ const getUser = (req, res) => {
     .catch(err => {
       console.error(err)
       if (err.name === 'NotFoundError') {
-        return res.status(404).send({ message: err.message })
+      return res.status(404).send({ message: err.message })
       }
-      res.status(400).send({ message: err.message })
+      return res.status(400).send({ message: err.message })
     })
 }
 
