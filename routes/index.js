@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const userRauter = require("./users.js")
-const itemRauter = require("./clothingItems.js")
+const userRauter = require("./users")
+
+const itemRauter = require("./clothingItems")
 
 
 router.use('/users', userRauter)

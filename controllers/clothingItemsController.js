@@ -77,9 +77,7 @@ const likeItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (itemId == null) {
-        return res.status(400).send({ message: err.message })
-      }
+      return res.status(400).send({ message: err.message })
     })
 }
 const dislikeItem = (req, res) => {
@@ -87,7 +85,7 @@ const dislikeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
     .orFail()
     .then(item => {
@@ -95,9 +93,7 @@ const dislikeItem = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-      if (itemId == null) {
-        return res.status(400).send({ message: err.message })
-      }
+      return res.status(500).send({ message: err.message })
     })
 }
 
