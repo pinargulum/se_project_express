@@ -10,7 +10,7 @@ const getItems = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
-      res.status(500).send({ message: err.message })
+      return res.status(500).send({ message: err.message })
     })
 }
 
@@ -28,7 +28,7 @@ const createItem = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
-      res.status(500).send({ message: err.message })
+      return res.status(500).send({ message: err.message })
     })
 }
 
@@ -44,7 +44,7 @@ const deleteItem = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
-      res.status(404).send({ message: err.message })
+      return res.status(404).send({ message: err.message })
     })
 }
 
@@ -61,7 +61,7 @@ const updateItem = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message })
       }
-      res.status(404).send({ message: err.message })
+      return res.status(404).send({ message: err.message })
     })
 }
 const likeItem = (req, res) => {
@@ -86,7 +86,7 @@ const dislikeItem = (req, res) => {
   const { itemId } = req.params
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
-    { $pull: { likes: req.user._id } }, 
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail()
