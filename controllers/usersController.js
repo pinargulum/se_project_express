@@ -17,18 +17,22 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   const { userId } = req.params
   User.findById(userId)
-  .orFail()
+  .orFail(() => {
+    const error = new Error('User not found');
+    error.name = 'NotFoundError';
+    throw error;
+  })
     .then((user) => {
       res.status(200).send(user)
     })
-    .catch((err) => {
-      console.error(err);
-      if (!userId.match(userId)) {
-        res.status(404).send({ message: "Requested resource not found" });
-          }
-      return res.status(400).send({ message: err.message });
-    });
-};
+    .catch(err => {
+      console.error(err)
+      if (err.name === 'NotFoundError') {
+        return res.status(404).send({ message: err.message })
+      }
+      res.status(400).send({ message: err.message })
+    })
+}
 
 
 // POST NEW USER
