@@ -9,7 +9,7 @@ const getUsers = (req, res) => {
     })
     .catch(err => {
       console.error(err)
-        res.status(404).send({ message: err.message })
+        return res.status(404).send({ message: err.message })
       })
 }
 
@@ -23,10 +23,10 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
+      if (!userId.match(userId)) {
+        res.status(404).send({ message: "Requested resource not found" });
+          }
+      return res.status(400).send({ message: err.message });
     });
 };
 

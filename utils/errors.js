@@ -1,9 +1,11 @@
-const errors = {
-  ValidationError: 400,
-  NotFound: 404,
-  ServerError: 500
-
+export const ValidationError = () => {
+  if ((res.statusCode = 400)) {
+    res.status(400).send({ message: 'Validation failed' })
+  }
 }
+
+export const NotFound = 404
+export const ServerError = 500
 
 const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode ? res.statusCode : 500
@@ -29,4 +31,8 @@ const errorHandler = (err, req, res, next) => {
       break
   }
 }
-module.exports = errorHandler
+
+if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+  res.status(400).send({ message: "please enter valid user id" });
+    }
+//module.exports = errorHandler
