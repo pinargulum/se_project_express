@@ -89,7 +89,6 @@ const createUser = (req, res) => {
         .send({ message: "An error has occurred on the server." });
     });
 };
-/*
 const login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
@@ -101,8 +100,8 @@ const login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(SERVER_ERROR).send({ message: "Please login to continue" });
+      res.status(SERVER_ERROR).send({ err, message: "Please login to continue" });
     });
 };
-*/
-module.exports = { getUsers, getUser, createUser };
+
+module.exports = { getUsers, getUser, createUser, login };
