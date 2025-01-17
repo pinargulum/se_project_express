@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 2,
+    select: false
   },
   avatar: {
     type: String,
@@ -44,7 +45,7 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials (email, password) {
-  return this.findOne({ email })
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error('Incorrect email or password'));

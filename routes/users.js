@@ -5,13 +5,15 @@ const router = express.Router()
 const {
   login,
   getUsers,
-  getUser,
+  getCurrentUser,
   createUser
 } = require('../controllers/usersController')
-router.post("/", login)
+
+
 router.get("/", getUsers)
-router.post("/", createUser)
-router.get('/:userId', getUser)
+router.get('/users/me', getCurrentUser)
+router.post('/signin', login);
+router.post("/signup", createUser)
 
 
 

@@ -10,8 +10,6 @@ const {
   NOT_FOUND,
 } = require("../utils/constants");
 
-
-
 // get all the users
 const getUsers = (req, res) => {
   User.find({})
@@ -27,8 +25,8 @@ const getUsers = (req, res) => {
 };
 
 // get single user
-const getUser = (req, res) => {
-  const { userId } = req.params;
+const getCurrentUser = (req, res) => {
+  const { userId } = req.user;
   User.findById(userId)
     .orFail(() => {
       const error = new Error("User not found");
@@ -58,24 +56,21 @@ const getUser = (req, res) => {
 
 // create a user
 const createUser = (req, res) => {
-  const { name, avatar, email, password } = req.body;
-  User.findOne({ email })
-    .then((existingUser) => {
-      if (existingUser) {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Email already exist." });
-      }
-      bcrypt
-        .hash(req.body.password, 10)
-        .then((hash) => User.create({
-          email: req.body.email,
-          password: hash
-        }))
-        .then((user) => {
-          res.status(201).send(user);
-        });
-    })
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name: req.body.name,
+      avatar: req.body.avatar,
+      email: req.body.email,
+      password: hash,
+    }))
+  .then((user) => {
+    res.status(201).send({
+      _id: user._id,
+      name: user.name,
+      password: user.password,
+      email: user.email,
+    });
+  })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -83,25 +78,26 @@ const createUser = (req, res) => {
           .status(VALIDATION_ERROR)
           .send({ message: "Please complete all mandatory fields." });
       }
-
       return res
         .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
 };
+
 const login = (req, res) => {
   const { email, password } = req.body;
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, "super-strong-secret", {
-          expiresIn: "7d",
-        }),
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: "7d" })
       });
+
     })
     .catch((err) => {
-      res.status(SERVER_ERROR).send({ err, message: "Please login to continue" });
+      res.status(401).send({ message: err.message });
     });
 };
 
-module.exports = { getUsers, getUser, createUser, login };
+
+module.exports = { getUsers, getCurrentUser, createUser, login };
