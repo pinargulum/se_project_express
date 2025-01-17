@@ -21,8 +21,9 @@ function auth (req, res, next)  {
     return res.status(VALIDATION_ERROR).send({ message: " Authorization failed " });
   }
 
-  return req.user = payload;
+  req.user = payload;
 
   next();
+  return
 };
 module.exports = auth;
