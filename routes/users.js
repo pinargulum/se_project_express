@@ -12,8 +12,7 @@ const {
 } = require('../controllers/usersController');
 
 
-router.post('/signin', login);
-router.post("/signup", createUser)//public
+
 
 router.get("/me", auth, getCurrentUser)
 

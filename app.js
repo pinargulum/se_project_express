@@ -1,6 +1,7 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const mainRouter = require("./routes/index");
+const bodyParser = require("body-parser")
 const cors = require("cors");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 */
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json)
 app.use("/", mainRouter);
 
 
