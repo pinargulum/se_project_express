@@ -3,7 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
-const auth = require("../middlewares/auth");
+
 
 const {
   SERVER_ERROR,
@@ -11,9 +11,7 @@ const {
   NOT_FOUND,
 } = require("../utils/constants");
 
-const { JWT_SECRET } = require("../utils/config")
-console.log(JWT_SECRET)
-
+const { JWT_SECRET } = require("../utils/config");
 
 
 // get all the users
@@ -29,7 +27,6 @@ const getUsers = (req, res) => {
         .send({ message: "An error has occurred on the server." });
     });
 };
-
 
 const getCurrentUser = (req, res) => {
   const userId = req.user;
@@ -73,12 +70,11 @@ const createUser = (req, res) => {
       })
     )
     .then((user) => {
-      const resposeUser = user.toObject()
-      delete resposeUser.password
-      res.status(201).send(resposeUser)
+      const resposeUser = user.toObject();
+      delete resposeUser.password;
+      res.status(201).send(resposeUser);
+    })
 
-      })
-   
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {

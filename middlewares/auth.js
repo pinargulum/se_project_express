@@ -11,13 +11,13 @@ const auth = (req, res, next) => {
     return res.status(401).send({ message: "Authorization required" });
   }
 
-  const token = authorization.replace("Bearer", "");
+  const token = authorization.replace("Bearer ", "");
   let payload;
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return res.status(401).send({ message: " Authorization failed " });
+    return res.status(VALIDATION_ERROR).send({ message: " Authorization failed " });
   }
 
   req.user = payload;
