@@ -73,13 +73,12 @@ const createUser = (req, res) => {
       })
     )
     .then((user) => {
-      res.status(201).send({
-        _id: user._id,
-        name: user.name,
-        password: user.password,
-        email: user.email,
-      });
-    })
+      const resposeUser = user.toObject()
+      delete resposeUser.password
+      res.status(201).send(resposeUser)
+
+      })
+   
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
