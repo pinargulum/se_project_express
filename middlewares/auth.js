@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require("../utils/config")
 
 const handleAuthError = (res) => {
   res
@@ -21,12 +22,12 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return handleAuthError(res);
   }
 
-  req.user = payload; // adding the payload to the Request object
+  req.user = payload;
 
-  next(); // passing the request further along
+  next();
 };

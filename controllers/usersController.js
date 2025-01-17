@@ -26,7 +26,7 @@ const getUsers = (req, res) => {
 
 // get single user
 const getCurrentUser = (req, res) => {
-  const { userId } = req.user;
+  const userId  = req.user;
   User.findById(userId)
     .orFail(() => {
       const error = new Error("User not found");
