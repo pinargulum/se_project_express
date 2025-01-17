@@ -3,13 +3,15 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
+const auth = require("../middlewares/auth");
 
 const {
   SERVER_ERROR,
   VALIDATION_ERROR,
   NOT_FOUND,
 } = require("../utils/constants");
-
+const JWT_SECRET = require("../utils/config")
+console.log(JWT_SECRET)
 // get all the users
 const getUsers = (req, res) => {
   User.find({})
@@ -26,7 +28,7 @@ const getUsers = (req, res) => {
 
 // get single user
 const getCurrentUser = (req, res) => {
-  const userId  = req.user;
+  const userId = req.user;
   User.findById(userId)
     .orFail(() => {
       const error = new Error("User not found");
@@ -56,21 +58,24 @@ const getCurrentUser = (req, res) => {
 
 // create a user
 const createUser = (req, res) => {
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name: req.body.name,
-      avatar: req.body.avatar,
-      email: req.body.email,
-      password: hash,
-    }))
-  .then((user) => {
-    res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      password: user.password,
-      email: user.email,
-    });
-  })
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) =>
+      User.create({
+        name: req.body.name,
+        avatar: req.body.avatar,
+        email: req.body.email,
+        password: hash,
+      })
+    )
+    .then((user) => {
+      res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        password: user.password,
+        email: user.email,
+      });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -90,14 +95,14 @@ const login = (req, res) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: "7d" })
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        }),
       });
-
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
     });
 };
-
 
 module.exports = { getUsers, getCurrentUser, createUser, login };
