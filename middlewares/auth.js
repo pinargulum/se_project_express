@@ -21,7 +21,7 @@ function auth (req, res, next)  {
     return res.status(VALIDATION_ERROR).send({ message: " Authorization failed " });
   }
 
-  req.user = payload;
+  return req.user = payload;
 
   next();
 };
