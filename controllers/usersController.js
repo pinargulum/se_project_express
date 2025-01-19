@@ -8,7 +8,7 @@ const {
   SERVER_ERROR,
   VALIDATION_ERROR,
   NOT_FOUND,
-  UNAUTHORIZED
+  UNAUTHORIZED,
 } = require("../utils/constants");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -58,7 +58,7 @@ const getCurrentUser = (req, res) => {
 const updateProfile = (req, res) => {
   const userId = req.user;
   const { name, avatar } = req.body;
-  if (!name && !avatar ) {
+  if (!name && !avatar) {
     return res
       .status(VALIDATION_ERROR)
       .send({ message: "name or avatar must be provided" });
@@ -127,6 +127,9 @@ const login = (req, res) => {
     .catch((err) => {
       return res.status(UNAUTHORIZED).send({ message: err.message });
     });
+  return res
+    .status(VALIDATION_ERROR)
+    .send({ message: "Please complete all mandatory fields." });
 };
 
 module.exports = { getUsers, getCurrentUser, createUser, login, updateProfile };
