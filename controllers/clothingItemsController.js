@@ -1,155 +1,153 @@
-const clothingItems = require('../models/clothingItems')
-const ClothingItem = require('../models/clothingItems')
+const clothingItems = require("../models/clothingItems");
+const ClothingItem = require("../models/clothingItems");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../utils/config")
+const JWT_SECRET = require("../utils/config");
 const {
   SERVER_ERROR,
   VALIDATION_ERROR,
-  NOT_FOUND
-} = require('../utils/constants')
+  NOT_FOUND,
+} = require("../utils/constants");
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then(clothingItems => {
-      res.status(200).send(clothingItems)
+    .then((clothingItems) => {
+      res.status(200).send(clothingItems);
     })
-    .catch(err => {
-      console.error(err)
+    .catch((err) => {
+      console.error(err);
       return res
         .status(SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server.' })
-    })
-}
+        .send({ message: "An error has occurred on the server." });
+    });
+};
 
 const createItem = (req, res) => {
-  const { name, weather, imageUrl } = req.body
-  const owner = req.user._id
+  const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
-    .then(item => {
-      console.log(item)
-      res.status(201).send(item)
+    .then((item) => {
+      console.log(item);
+      res.status(201).send(item);
     })
-    .catch(err => {
-      console.error(err)
-      if (err.name === 'ValidationError') {
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
         return res
           .status(VALIDATION_ERROR)
-          .send({ message: 'Please complete all mandatory fields.' })
+          .send({ message: "Please complete all mandatory fields." });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server.' })
-    })
-}
+        .send({ message: "An error has occurred on the server." });
+    });
+};
 
 const deleteItem = (req, res) => {
-  const { itemId } = req.params
-  const owner = req.user._id
-  const currentUser = req.user
-//const token =  jwt.sign({ _id: user._id }, JWT_SECRET, {
-  //expiresIn: "7d",
-//})
-  if(currentUser !== owner) {
-    return res.status(403).send({ message: "you are not authorized to delete the item"})
-  }
+  const { itemId } = req.params;
+  const owner = req.user._id;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  return ClothingItem.findByIdAndDelete(itemId)
     .orFail(() => {
-      const error = new Error('item not found')
-      error.name = 'NotFoundError'
-      throw error
+      const error = new Error("item not found");
+      error.name = "NotFoundError";
+      throw error;
     })
-    .then(item => {
-      res.status(200).send(item)
+    .then((item) => {
+      if (item.owner.toString() !== owner.toString()) {
+        return res
+          .status(403)
+          .send({ message: "You are not authorized to delete this item" });
+      }
+      res.status(200).send(item);
     })
-    .catch(err => {
-      console.error(err)
-      if (err.name === 'NotFoundError') {
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "NotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: 'User information not found' })
+          .send({ message: "User information not found" });
       }
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         return res
           .status(VALIDATION_ERROR)
-          .send({ message: 'Please complete all mandatory fields.' })
+          .send({ message: "Please complete all mandatory fields." });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server.' })
-    })
-}
+        .send({ message: "An error has occurred on the server." });
+    });
+};
 
 const likeItem = (req, res) => {
-  const { itemId } = req.params
+  const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail(() => {
-      const error = new Error('item not found')
-      error.name = 'NotFoundError'
-      throw error
+      const error = new Error("item not found");
+      error.name = "NotFoundError";
+      throw error;
     })
-    .then(item => {
-      res.status(200).send({ data: item })
+    .then((item) => {
+      res.status(200).send({ data: item });
     })
-    .catch(err => {
-      console.error(err)
-      if (err.name === 'NotFoundError') {
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "NotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: 'User information not found' })
+          .send({ message: "User information not found" });
       }
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         return res
           .status(VALIDATION_ERROR)
-          .send({ message: 'Please complete all mandatory fields.' })
+          .send({ message: "Please complete all mandatory fields." });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server.' })
-    })
-}
+        .send({ message: "An error has occurred on the server." });
+    });
+};
 const dislikeItem = (req, res) => {
-  const { itemId } = req.params
+  const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
     .orFail(() => {
-      const error = new Error('item not found')
-      error.name = 'NotFoundError'
-      throw error
+      const error = new Error("item not found");
+      error.name = "NotFoundError";
+      throw error;
     })
-    .then(item => {
-      res.status(200).send(item)
+    .then((item) => {
+      res.status(200).send(item);
     })
-    .catch(err => {
-      console.error(err)
-      if (err.name === 'NotFoundError') {
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "NotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: 'User information not found' })
+          .send({ message: "User information not found" });
       }
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         return res
           .status(VALIDATION_ERROR)
-          .send({ message: 'Please complete all mandatory fields.' })
+          .send({ message: "Please complete all mandatory fields." });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server.' })
-    })
-}
+        .send({ message: "An error has occurred on the server." });
+    });
+};
 
 module.exports = {
   getItems,
   deleteItem,
   createItem,
   likeItem,
-  dislikeItem
-}
+  dislikeItem,
+};
