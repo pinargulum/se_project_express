@@ -1,6 +1,7 @@
 const clothingItems = require('../models/clothingItems')
 const ClothingItem = require('../models/clothingItems')
-
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = require("../utils/config")
 const {
   SERVER_ERROR,
   VALIDATION_ERROR,
@@ -46,8 +47,10 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params
   const owner = req.user._id
   const currentUser = req.user
-
-  if(owner !== currentUser) {
+//const token =  jwt.sign({ _id: user._id }, JWT_SECRET, {
+  //expiresIn: "7d",
+//})
+  if(currentUser !== owner) {
     return res.status(403).send({ message: "you are not authorized to delete the item"})
   }
 
