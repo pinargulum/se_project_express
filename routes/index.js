@@ -10,10 +10,12 @@ const { login, createUser } = require("../controllers/usersController");
 
 const { NOT_FOUND } = require("../utils/constants");
 
+router.post("/signin", login);
+router.post("/signup", createUser);
+
+
 router.use("/users", userRauter);
 router.use("/items", itemRauter);
-router.post("/signin", login);
-router.post("/signup", createUser); 
 
 router.use((req, res) => {
   res.status(NOT_FOUND).send({ message: "Page not found" });

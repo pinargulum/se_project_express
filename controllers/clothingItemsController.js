@@ -1,3 +1,4 @@
+const clothingItems = require('../models/clothingItems')
 const ClothingItem = require('../models/clothingItems')
 
 const {
@@ -43,6 +44,13 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params
+  const owner = req.user._id
+  const currentUser = req.user
+
+  if(owner !== currentUser) {
+    return res.status(403).send({ message: "you are not authorized to delete the item"})
+  }
+
   ClothingItem.findByIdAndDelete(itemId)
     .orFail(() => {
       const error = new Error('item not found')

@@ -1,11 +1,8 @@
-
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-
-
 
 const {
   SERVER_ERROR,
@@ -14,7 +11,6 @@ const {
 } = require("../utils/constants");
 
 const { JWT_SECRET } = require("../utils/config");
-
 
 // get all the users
 const getUsers = (req, res) => {
@@ -57,6 +53,31 @@ const getCurrentUser = (req, res) => {
         .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
+};
+const updateProfile = (req, res) => {
+  const userId = req.user;
+  const { name, avatar } = req.body;
+  if (!name && !avatar ) {
+    return res
+      .status(VALIDATION_ERROR)
+      .send({ message: "name or avatar must be provided" });
+  }
+  return User.findByIdAndUpdate(
+    userId,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .then((updatedProfile) => {
+      return res.status(200).send(updatedProfile);
+    })
+    .catch((updatedProfile) => {
+      if (!updateProfile) {
+        return res.status(NOT_FOUND).send({ message: "User not found" });
+      }
+    });
+  return res
+    .status(SERVER_ERROR)
+    .send({ message: "An error has occurred on the server." });
 };
 
 // create a user
@@ -106,4 +127,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getCurrentUser, createUser, login };
+module.exports = { getUsers, getCurrentUser, createUser, login, updateProfile };
