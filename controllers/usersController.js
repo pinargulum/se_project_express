@@ -8,6 +8,7 @@ const {
   SERVER_ERROR,
   VALIDATION_ERROR,
   NOT_FOUND,
+  UNAUTHORIZED
 } = require("../utils/constants");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -70,7 +71,8 @@ const updateProfile = (req, res) => {
     .then((updatedProfile) => {
       return res.status(200).send(updatedProfile);
     })
-    .catch((updatedProfile) => {
+    .catch((err) => {
+      console.error(err);
       if (!updateProfile) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
@@ -106,7 +108,7 @@ const createUser = (req, res) => {
           .send({ message: "Please complete all mandatory fields." });
       }
       return res
-        .status(SERVER_ERROR)
+        .status(UNAUTHORIZED)
         .send({ message: "An error has occurred on the server." });
     });
 };
@@ -123,7 +125,7 @@ const login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      return res.status(UNAUTHORIZED).send({ message: err.message });
     });
 };
 
