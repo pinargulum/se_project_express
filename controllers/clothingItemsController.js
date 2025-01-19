@@ -6,6 +6,7 @@ const {
   SERVER_ERROR,
   VALIDATION_ERROR,
   NOT_FOUND,
+  FORBIDDEN
 } = require("../utils/constants");
 
 const getItems = (req, res) => {
@@ -56,7 +57,7 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (item.owner.toString() !== owner.toString()) {
         return res
-          .status(403)
+          .status(FORBIDDEN)
           .send({ message: "You are not authorized to delete this item" });
       }
       res.status(200).send(item);
