@@ -15,20 +15,6 @@ const {
 
 const { JWT_SECRET } = require("../utils/config");
 
-// get all the users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
-};
-
 const getCurrentUser = (req, res) => {
   const userId = req.user;
   User.findById(userId)
@@ -38,7 +24,7 @@ const getCurrentUser = (req, res) => {
       throw error;
     })
     .then((user) => {
-      res.status(200).send(user);
+      res.send(user);
     })
 
     .catch((err) => {
@@ -67,14 +53,14 @@ const updateProfile = (req, res) => {
     { new: true, runValidators: true }
   )
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       console.error(err);
-      if (name && avatar) {
+      if (err.name === "ValidationError") {
         return res
           .status(VALIDATION_ERROR)
-          .send({ message: "Invalid user name or password" });
+          .send({ message: "Please complete all mandatory fields." });
       }
       return res
         .status(SERVER_ERROR)
@@ -128,11 +114,15 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-
+      if (err.message === "Incorrect email or password") {
+        return res
+        .status(UNAUTHORIZED)
+        .send({ message: "Please provide valid user name and password." });
+     }
       return res
         .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
 };
 
-module.exports = { getUsers, getCurrentUser, createUser, login, updateProfile };
+module.exports = { getCurrentUser, createUser, login, updateProfile };

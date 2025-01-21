@@ -85,7 +85,7 @@ const likeItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.send({ data: item });
     })
     .catch((err) => {
       console.error(err);
@@ -117,7 +117,7 @@ const dislikeItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      res.status(200).send(item);
+      res.send(item);
     })
     .catch((err) => {
       console.error(err);
