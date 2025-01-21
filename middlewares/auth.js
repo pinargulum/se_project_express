@@ -18,7 +18,7 @@ function auth (req, res, next)  {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return res.status(VALIDATION_ERROR).send({ message: " Authorization failed " });
+    return res.status(UNAUTHORIZED).send({ message: " Authorization failed " });
   }
 
   req.user = payload;

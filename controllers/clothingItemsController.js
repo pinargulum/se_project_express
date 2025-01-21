@@ -11,7 +11,7 @@ const {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((clothingItems) => {
-      res.status(200).send(clothingItems);
+      res.send(clothingItems);
     })
     .catch((err) => {
       console.error(err);
@@ -107,7 +107,7 @@ const likeItem = (req, res) => {
 const dislikeItem = (req, res) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )

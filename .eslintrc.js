@@ -28,9 +28,6 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
-    'no-unused-vars': ['warn', { argsIgnorePattern: 'reg|res|next' }],
-    'node/no-unpublishhed-require': 'off',
-    'node/no-missing-import': 'off',
     'no-underscore-dangle': ['error', { allow: ['_id'] }]
   }
 }

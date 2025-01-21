@@ -26,7 +26,7 @@ const clothingItemSchema = new mongoose.Schema({
     enum: ['hot', 'warm', 'cold']
   },
   owner: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    type: mongoose.Schema.Types.ObjectId,
     required: true
   },
 
