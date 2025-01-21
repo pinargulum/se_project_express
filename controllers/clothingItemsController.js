@@ -1,4 +1,3 @@
-
 const ClothingItem = require("../models/clothingItems");
 
 const {
@@ -54,15 +53,17 @@ const deleteItem = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(VALIDATION_ERROR)
           .send({ message: "Please complete all mandatory fields." });
       }
       if (itemId) {
-      return res.status(NOT_FOUND).send({ message: "Item not found." });
+        return res.status(NOT_FOUND).send({ message: "Item not found." });
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
