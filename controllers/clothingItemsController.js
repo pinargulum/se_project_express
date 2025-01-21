@@ -1,7 +1,6 @@
-const clothingItems = require("../models/clothingItems");
+
 const ClothingItem = require("../models/clothingItems");
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../utils/config");
+
 const {
   SERVER_ERROR,
   VALIDATION_ERROR,
@@ -49,7 +48,6 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const owner = req.user._id;
   return ClothingItem.findByIdAndDelete(itemId)
-
     .then((item) => {
       if (item.owner.toString() === owner.toString()) {
         return res.status(200).send(item);
