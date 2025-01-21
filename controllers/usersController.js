@@ -9,7 +9,6 @@ const {
   VALIDATION_ERROR,
   NOT_FOUND,
   UNAUTHORIZED,
-  FORBIDDEN,
   CONFLICT,
 } = require("../utils/constants");
 
@@ -70,7 +69,7 @@ const updateProfile = (req, res) => {
 
 // create a user
 const createUser = (req, res) => {
-  const { name, avatar, email, password } = req.body;
+  const { name, avatar, email } = req.body;
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
@@ -104,7 +103,7 @@ const login = (req, res) => {
       .status(VALIDATION_ERROR)
       .send({ message: "The email and password fields are required" });
   }
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {

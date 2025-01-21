@@ -5,7 +5,6 @@ const {
   VALIDATION_ERROR,
   NOT_FOUND,
   FORBIDDEN,
-  UNAUTHORIZED,
 } = require("../utils/constants");
 
 const getItems = (req, res) => {
@@ -28,7 +27,7 @@ const createItem = (req, res) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log(item);
-      res.status(201).send(item);
+     return res.status(201).send(item);
     })
     .catch((err) => {
       console.error(err);
