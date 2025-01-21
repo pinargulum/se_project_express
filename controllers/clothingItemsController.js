@@ -50,7 +50,7 @@ const deleteItem = (req, res) => {
   return ClothingItem.findByIdAndDelete(itemId)
     .then((item) => {
       if (item.owner.toString() === owner.toString()) {
-        return res.status(200).send(item);
+        res.status(200).send(item);
       }
     })
     .catch((err) => {

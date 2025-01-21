@@ -38,10 +38,9 @@ const getCurrentUser = (req, res) => {
       throw error;
     })
     .then((user) => {
-      if(userId) {
-      return res.status(200).send(user);
-      }
+      res.status(200).send(user);
     })
+
     .catch((err) => {
       console.error(err);
       if (err.name === "NotFoundError") {
@@ -68,9 +67,7 @@ const updateProfile = (req, res) => {
     { new: true, runValidators: true }
   )
     .then((user) => {
-      if(userId) {
-      return res.status(200).send({ data: user });
-      }
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       console.error(err);
