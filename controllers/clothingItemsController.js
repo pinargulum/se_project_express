@@ -6,7 +6,8 @@ const {
   SERVER_ERROR,
   VALIDATION_ERROR,
   NOT_FOUND,
-  FORBIDDEN
+  FORBIDDEN,
+  UNAUTHORIZED,
 } = require("../utils/constants");
 
 const getItems = (req, res) => {
@@ -47,43 +48,30 @@ const createItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const owner = req.user._id;
-
   return ClothingItem.findByIdAndDelete(itemId)
-    .orFail(() => {
-      const error = new Error("item not found");
-      error.name = "NotFoundError";
-      throw error;
-    })
+
     .then((item) => {
-      if (item.owner.toString() !== owner.toString()) {
-        return res
-          .status(FORBIDDEN)
-          .send({ message: "You are not authorized to delete this item" });
+      if (item.owner.toString() === owner.toString()) {
+        return res.status(200).send(item);
       }
-      res.status(200).send(item);
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "NotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "User information not found" });
-      }
       if (err.name === "CastError") {
         return res
           .status(VALIDATION_ERROR)
           .send({ message: "Please complete all mandatory fields." });
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      if (itemId) {
+      return res.status(NOT_FOUND).send({ message: "Item not found." });
+      }
     });
 };
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )

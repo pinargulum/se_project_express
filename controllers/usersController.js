@@ -9,6 +9,8 @@ const {
   VALIDATION_ERROR,
   NOT_FOUND,
   UNAUTHORIZED,
+  FORBIDDEN,
+  CONFLICT,
 } = require("../utils/constants");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -36,7 +38,7 @@ const getCurrentUser = (req, res) => {
       throw error;
     })
     .then((user) => {
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       console.error(err);
@@ -58,48 +60,38 @@ const getCurrentUser = (req, res) => {
 const updateProfile = (req, res) => {
   const userId = req.user;
   const { name, avatar } = req.body;
-  if (!name && !avatar) {
-    return res
-      .status(VALIDATION_ERROR)
-      .send({ message: "name or avatar must be provided" });
-  }
   return User.findByIdAndUpdate(
     userId,
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .then((updatedProfile) => {
-      return res.status(200).send(updatedProfile);
+    .then((user) => {
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       console.error(err);
-      if (!updateProfile) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+      if (name && avatar) {
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: "Invalid user name or password" });
       }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
-  return res
-    .status(SERVER_ERROR)
-    .send({ message: "An error has occurred on the server." });
 };
 
 // create a user
 const createUser = (req, res) => {
+  const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(req.body.password, 10)
-    .then((hash) =>
-      User.create({
-        name: req.body.name,
-        avatar: req.body.avatar,
-        email: req.body.email,
-        password: hash,
-      })
-    )
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
       const resposeUser = user.toObject();
       delete resposeUser.password;
       res.status(201).send(resposeUser);
     })
-
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -107,16 +99,20 @@ const createUser = (req, res) => {
           .status(VALIDATION_ERROR)
           .send({ message: "Please complete all mandatory fields." });
       }
+      if (email) {
+        return res
+          .status(CONFLICT)
+          .send({ message: "Please use different email." });
+      }
       return res
-        .status(UNAUTHORIZED)
+        .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -125,11 +121,16 @@ const login = (req, res) => {
       });
     })
     .catch((err) => {
-      return res.status(UNAUTHORIZED).send({ message: err.message });
+      console.error(err);
+      if (email || password) {
+        return res
+          .status(VALIDATION_ERROR)
+          .send({ message: "incorrect email or password" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
-  return res
-    .status(VALIDATION_ERROR)
-    .send({ message: "Please complete all mandatory fields." });
 };
 
 module.exports = { getUsers, getCurrentUser, createUser, login, updateProfile };
