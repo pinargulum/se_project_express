@@ -113,6 +113,11 @@ const createUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(VALIDATION_ERROR)
+      .send({ message: "The email and password fields are required" });
+  }
   User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
@@ -123,11 +128,7 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (email || password) {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "incorrect email or password" });
-      }
+
       return res
         .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });

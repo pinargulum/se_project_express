@@ -46,11 +46,16 @@ const createItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const owner = req.user._id;
-  return ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .then((item) => {
-      if (item.owner.toString() === owner.toString()) {
-        res.status(200).send(item);
+      if (!item.owner === owner) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "You are not authorized to delete the item." });
       }
+      return item
+        .deleteOne()
+        .then(() => res.send({ message: " Item deleted." }));
     })
     .catch((err) => {
       if (err.name === "CastError") {
