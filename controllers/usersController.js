@@ -69,10 +69,10 @@ const updateProfile = (req, res) => {
 
 // create a user
 const createUser = (req, res) => {
-  const { name, avatar, email } = req.body;
+  const { email, name, avatar } = req.body;
   bcrypt
     .hash(req.body.password, 10)
-    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((hash) => User.create({ email, password: hash, name, avatar }))
     .then((user) => {
       const resposeUser = user.toObject();
       delete resposeUser.password;

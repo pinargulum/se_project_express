@@ -7,7 +7,7 @@ const {
   FORBIDDEN,
 } = require("../utils/constants");
 
-const getItems = (req, res) => {
+const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((clothingItems) => {
       res.send(clothingItems);
@@ -84,7 +84,7 @@ const likeItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      res.send({ data: item });
+      res.send(item);
     })
     .catch((err) => {
       console.error(err);
@@ -137,7 +137,7 @@ const dislikeItem = (req, res) => {
 };
 
 module.exports = {
-  getItems,
+  getClothingItems,
   deleteItem,
   createItem,
   likeItem,

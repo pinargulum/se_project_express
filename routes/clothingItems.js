@@ -5,7 +5,7 @@ const auth = require("../middlewares/auth")
 const router = express.Router()
 
 const {
-  getItems,
+  getClothingItems,
   createItem,
   deleteItem,
   likeItem,
@@ -13,7 +13,7 @@ const {
 
 } = require('../controllers/clothingItemsController')
 
-router.get('/',  getItems)
+router.get('/',  getClothingItems)
 router.post('/', auth, createItem)
 router.delete('/:itemId', auth, deleteItem)
 router.put('/:itemId/likes', auth, likeItem)
