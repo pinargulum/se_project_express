@@ -72,7 +72,7 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequestError("The email and password fields are required");
+    throw new BadRequestError("Please fill all the requred fields");
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -85,7 +85,7 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        next(new UnauthorizedError("Please fill all the requred fields"));
+        next(new UnauthorizedError("invalid password or email"));
       } else {
         next(err);
       }
