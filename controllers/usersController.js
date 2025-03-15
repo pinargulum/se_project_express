@@ -52,6 +52,9 @@ const updateProfile = (req, res) => {
 // create a user
 const createUser = (req, res) => {
   const { email, name, avatar } = req.body;
+  if (email) {
+    throw new ConflictError("Please provide different email");
+  }
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({ email, password: hash, name, avatar }))
@@ -63,7 +66,7 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Please fill all the requred fields"));
+       throw new BadRequestError("Please fill all the requred fields");
       } else {
         next(err);
       }
