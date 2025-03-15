@@ -4,13 +4,12 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
-const {
-  SERVER_ERROR,
-  VALIDATION_ERROR,
-  NOT_FOUND,
-  UNAUTHORIZED,
-  CONFLICT,
-} = require("../utils/constants");
+const BadRequestError = require("../middlewares/errors/BadRequestError");
+const ConflictError = require("../middlewares/errors/ConflictError");
+const ForbiddenError = require("../middlewares/errors/ForbiddenError");
+const NotFoundError = require("../middlewares/errors/NotFoundError");
+const UnauthorizedError = require("../middlewares/errors/UnauthorizedError");
+const ServerError = require("../middlewares/errors/ServerError");
 
 const { JWT_SECRET } = require("../utils/config");
 
@@ -18,31 +17,18 @@ const getCurrentUser = (req, res) => {
   const userId = req.user;
   User.findById(userId)
     .orFail(() => {
-      const error = new Error("User not found");
-      error.name = "NotFoundError";
-      throw error;
+      throw new NotFoundError('No user with matching ID found');
     })
     .then((user) => {
       res.send(user);
     })
-
     .catch((err) => {
       console.error(err);
-      if (err.name === "NotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "User information not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
-};
+        next(err);
+      })
+    }
+
+
 const updateProfile = (req, res) => {
   const userId = req.user;
   const { name, avatar } = req.body;
