@@ -1,77 +1,58 @@
 const ClothingItem = require("../models/clothingItems");
+const BadRequestError = require("../middlewares/errors/BadRequestError");
+const ConflictError = require("../middlewares/errors/ConflictError");
+const ForbiddenError = require("../middlewares/errors/ForbiddenError");
+const NotFoundError = require("../middlewares/errors/NotFoundError");
+const UnauthorizedError = require("../middlewares/errors/UnauthorizedError");
+const ServerError = require("../middlewares/errors/ServerError");
 
-const {
-  SERVER_ERROR,
-  VALIDATION_ERROR,
-  NOT_FOUND,
-  FORBIDDEN,
-} = require("../utils/constants");
-
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((clothingItems) => {
       res.send(clothingItems);
     })
     .catch((err) => {
       console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      throw new ServerError("An error has occurred on the server.").catch(next);
     });
 };
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => {
-      console.log(item);
-     return res.status(201).send(item);
-    })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
+  ClothingItem.create({ name, weather, imageUrl, owner }).then((item) => {
+    console.log(item);
+    return res.status(201).send(item);
+  })
+
+
+
+  .catch(next);
+
+
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const owner = req.user._id;
   ClothingItem.findById(itemId)
     .then((item) => {
       if (String(item.owner) !== owner) {
-        return res
-          .status(FORBIDDEN)
-          .send({ message: "You are not authorized to delete the item." });
+        throw new ForbiddenError("You are not authorized to delete the item.");
+      }
+      if (!itemId) {
+        throw new NotFoundError("Item not found.");
       }
       return item
         .deleteOne()
         .then(() => res.send({ message: " Item deleted." }));
     })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
-      }
-      if (itemId) {
-        return res.status(NOT_FOUND).send({ message: "Item not found." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
+
+    .catch(next);
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     itemId,
@@ -79,28 +60,16 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail(() => {
-      const error = new Error("item not found");
-      error.name = "NotFoundError";
-      throw error;
+      throw new NotFoundError("Item not found.");
     })
     .then((item) => {
       res.send(item);
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "NotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "User information not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      console
+        .error(err)
+
+        .catch(next);
     });
 };
 const dislikeItem = (req, res) => {
@@ -111,28 +80,13 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail(() => {
-      const error = new Error("item not found");
-      error.name = "NotFoundError";
-      throw error;
+      throw new NotFoundError("Item not found.");
     })
     .then((item) => {
       res.send(item);
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "NotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "User information not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      console.error(err).catch(next);
     });
 };
 

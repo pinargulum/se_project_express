@@ -22,6 +22,10 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use("/", mainRouter);
+app.use((err, req, res, next) => {
+  console.error(err);
+res.status(err.statusCode).send({ message: err.message });
+});
 
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
