@@ -17,17 +17,16 @@ const getCurrentUser = (req, res) => {
   const userId = req.user;
   User.findById(userId)
     .orFail(() => {
-      throw new NotFoundError('No user with matching ID found');
+      throw new NotFoundError("No user with matching ID found");
     })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       console.error(err);
-        next(err);
-      })
-    }
-
+      next(err);
+    });
+};
 
 const updateProfile = (req, res) => {
   const userId = req.user;
@@ -43,13 +42,10 @@ const updateProfile = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
+        next(new BadRequestError("Please fill all the requred fields"));
+      } else {
+        next(err);
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -67,27 +63,16 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(VALIDATION_ERROR)
-          .send({ message: "Please complete all mandatory fields." });
+        next(new BadRequestError("Please fill all the requred fields"));
+      } else {
+        next(err);
       }
-      if (email) {
-        return res
-          .status(CONFLICT)
-          .send({ message: "Please use different email." });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
     });
 };
-
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(VALIDATION_ERROR)
-      .send({ message: "The email and password fields are required" });
+    throw new BadRequestError("The email and password fields are required");
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -100,13 +85,10 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res
-        .status(UNAUTHORIZED)
-        .send({ message: "Please provide valid user name and password." });
-     }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+        next(new UnauthorizedError("Please fill all the requred fields"));
+      } else {
+        next(err);
+      }
     });
 };
 

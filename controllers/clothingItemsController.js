@@ -26,11 +26,10 @@ const createItem = (req, res, next) => {
       console.log(item);
       return res.status(201).send(item);
     })
-
-    .catch((err) => {
-      console.error(err);
-      if (name, weather, imageUrl) {
-        next(new BadRequestError("Please fill all the requred fields"));
+      .catch((err) => {
+        console.error(err);
+        if (err.name === "ValidationError") {
+          next(new BadRequestError("Please fill all the requred fields"));
       } else {
         next(err);
       }
