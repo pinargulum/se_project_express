@@ -21,16 +21,20 @@ const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageUrl, owner }).then((item) => {
-    console.log(item);
-    return res.status(201).send(item);
-  })
+  ClothingItem.create({ name, weather, imageUrl, owner })
+    .then((item) => {
+      console.log(item);
+      return res.status(201).send(item);
+    })
 
-
-
-  .catch(next);
-
-
+    .catch((err) => {
+      console.error(err);
+      if (name, weather, imageUrl) {
+        next(new BadRequestError("Please fill all the requred fields"));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteItem = (req, res, next) => {
@@ -48,10 +52,15 @@ const deleteItem = (req, res, next) => {
         .deleteOne()
         .then(() => res.send({ message: " Item deleted." }));
     })
-
-    .catch(next);
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
+    });
 };
-
 const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
@@ -66,10 +75,12 @@ const likeItem = (req, res, next) => {
       res.send(item);
     })
     .catch((err) => {
-      console
-        .error(err)
-
-        .catch(next);
+      console.error(err);
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
     });
 };
 const dislikeItem = (req, res) => {
@@ -86,7 +97,12 @@ const dislikeItem = (req, res) => {
       res.send(item);
     })
     .catch((err) => {
-      console.error(err).catch(next);
+      console.error(err);
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
     });
 };
 
