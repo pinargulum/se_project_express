@@ -13,7 +13,7 @@ const ServerError = require("../middlewares/errors/ServerError");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user;
   User.findById(userId)
     .orFail(() => {
@@ -28,7 +28,7 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const userId = req.user;
   const { name, avatar } = req.body;
   return User.findByIdAndUpdate(
@@ -50,11 +50,8 @@ const updateProfile = (req, res) => {
 };
 
 // create a user
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { email, name, avatar } = req.body;
-  if (email) {
-    throw new ConflictError("Please provide different email");
-  }
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({ email, password: hash, name, avatar }))
@@ -66,13 +63,13 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-       throw new BadRequestError("Please fill all the requred fields");
-      } else {
-        next(err);
-      }
-    });
+        throw new BadRequestError("Please fill all the requred fields");
+    } else {
+      next(err);
+    }
+  });
 };
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new BadRequestError("Please fill all the requred fields");
