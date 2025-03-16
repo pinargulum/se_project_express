@@ -3,7 +3,7 @@ const { default: mongoose } = require("mongoose");
 const cors = require("cors");
 const helmet = require('helmet')
 const mainRouter = require("./routes/index");
-
+//const errorHandler = require("./middlewares/errors");
 
 
 
@@ -26,7 +26,6 @@ app.use((err, req, res, next) => {
   console.error(err);
 res.status(err.statusCode).send({ message: err.message });
 });
-
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });

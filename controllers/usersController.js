@@ -23,8 +23,11 @@ const getCurrentUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      console.error(err);
-      next(err);
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -40,7 +43,7 @@ const updateProfile = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      console.error(err);
+     
       if (err.name === "ValidationError") {
         next(new BadRequestError("Please fill all the requred fields"));
       } else {
@@ -63,11 +66,11 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Please fill all the requred fields");
-    } else {
-      next(err);
-    }
-  });
+        next(new BadRequestError("Please fill all the requred fields"));
+      } else {
+        next(err);
+      }
+    });
 };
 const login = (req, res, next) => {
   const { email, password } = req.body;
