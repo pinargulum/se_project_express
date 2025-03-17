@@ -4,7 +4,7 @@ const cors = require("cors");
 const helmet = require('helmet')
 const mainRouter = require("./routes/index");
 const { errors } = require('celebrate');
-
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 
 
@@ -21,7 +21,9 @@ mongoose
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(requestLogger);
 app.use("/", mainRouter);
+app.use(errorLogger);
 app.use(errors());
 app.use((err, req, res, next) => {
   console.error(err);
