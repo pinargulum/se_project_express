@@ -3,7 +3,7 @@ const { default: mongoose } = require("mongoose");
 const cors = require("cors");
 const helmet = require('helmet')
 const mainRouter = require("./routes/index");
-//const errorHandler = require("./middlewares/errors");
+const { errors } = require('celebrate');
 
 
 
@@ -22,7 +22,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use("/", mainRouter);
-
+app.use(errors());
 app.use((err, req, res, next) => {
   console.error(err);
 res.status(err.statusCode).send({ message: err.message });

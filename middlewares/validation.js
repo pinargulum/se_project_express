@@ -1,47 +1,83 @@
-const { Joi, celebrate } = require('celebrate');
-const validator = require('validator');
-const { createUser } = require('../controllers/usersController');
-
-
-
-
+const { Joi, celebrate } = require("celebrate");
+const validator = require("validator");
+const { createUser, login } = require("../controllers/usersController");
 
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
-  return helpers.error('string.uri');
-}
-
-router.post('/users', celebrate({
+  return helpers.error("string.uri");
+};
+validateClothingItemBody = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().required().min(2).max(30),
-    age: Joi.number().integer().required().min(18),
-    about: Joi.string().min(2).max(30),
-  })
-}), createUser);
-
-router.post('/items', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
+    name: Joi.string().required().min(2).max(30).messages({
+      "string.min": 'The minimum length of the "name" field is 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+      "string.empty": 'The "name" field must be filled in',
+    }),
     imageUrl: Joi.string().required().custom(validateURL).messages({
-      'string.empty': 'The "imageUrl" field must be filled in',
-      'string.uri': 'the "imageUrl" field must be a valid url',
+      "string.empty": 'The "imageUrl" field must be filled in',
+      "string.uri": 'the "imageUrl" field must be a valid url',
     }),
   }),
-}), createItems);
+});
 
-router.delete('/:itemId', celebrate({
-  // validate parameters
+validateItemId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().alphanum().length(24),
   }),
-  headers: Joi.object().keys({
-    // validate headers
+  headers: Joi.object().keys({}),
+  query: Joi.object().keys({}).unknown(true),
+});
+
+  router.post(
+    "/signup",
+    celebrate({
+      body: Joi.object().keys({
+        email: Joi.string().required().email(),
+        password: Joi.string().required().min(2),
+        name: Joi.string().required().min(2).max(30),
+        avatar: Joi.string().required().custom(validateURL).messages({
+          "string.empty": 'The "imageUrl" field must be filled in',
+          "string.uri": 'the "imageUrl" field must be a valid url',
+        }),
+      }),
+    }),
+    createUser
+  );
+
+router.post(
+  "/signin",
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }),
   }),
-  query: Joi.object().keys({
-    // validate query
-  }).unknown(true),
-}), deletePost);
+  login
+);
+router.post(
+  "/items",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      imageUrl: Joi.string().required().custom(validateURL).messages({
+        "string.empty": 'The "imageUrl" field must be filled in',
+        "string.uri": 'the "imageUrl" field must be a valid url',
+      }),
+    }),
+  }),
+  createItems
+);
+
+router.delete(
+  "/:itemId",
+  celebrate({
+    params: Joi.object().keys({
+      itemId: Joi.string().alphanum().length(24),
+    }),
+    headers: Joi.object().keys({}),
+    query: Joi.object().keys({}).unknown(true),
+  }),
+  deletePost
+);
