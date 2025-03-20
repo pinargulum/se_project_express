@@ -1,5 +1,6 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
+const router = express.Router();
 const { createUser, login } = require("../controllers/usersController");
 const { deleteItem, createItem } = require("../controllers/clothingItemsController");
 
@@ -9,7 +10,7 @@ const validateURL = (value, helpers) => {
   }
   return helpers.error("string.uri");
 };
-validateClothingItems = celebrate({
+const validateClothingItems = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
@@ -23,7 +24,7 @@ validateClothingItems = celebrate({
   }),
 });
 
-validateItemId = celebrate({
+const validateItemId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().alphanum().length(24),
   }),

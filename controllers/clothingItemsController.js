@@ -82,7 +82,7 @@ const likeItem = (req, res, next) => {
       }
     });
 };
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     itemId,

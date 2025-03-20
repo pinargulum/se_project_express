@@ -2,8 +2,9 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const cors = require("cors");
 const helmet = require('helmet')
-const mainRouter = require("./routes/index");
 const { errors } = require('celebrate');
+const mainRouter = require("./routes/index");
+
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 
