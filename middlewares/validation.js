@@ -1,11 +1,5 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
-const router = express.Router();
-const { createUser, login } = require("../controllers/usersController");
-const {
-  deleteItem,
-  createItem,
-} = require("../controllers/clothingItemsController");
 
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
@@ -13,7 +7,6 @@ const validateURL = (value, helpers) => {
   }
   return helpers.error("string.uri");
 };
-
 
 const validateSignup = celebrate({
   body: Joi.object().keys({
@@ -36,7 +29,7 @@ const validateSigin = celebrate({
 
 const validateCreateItem = celebrate({
   headers: Joi.object()
-    .keys({ userId: Joi.string().alphanum().length(24).required()})
+    .keys({ userId: Joi.string().alphanum().length(24).required() })
     .unknown(),
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
@@ -51,12 +44,17 @@ const validateCreateItem = celebrate({
   }),
 });
 
-const validateDeleteItem = celebrate({
+const validateItem = celebrate({
   headers: Joi.object()
-    .keys({ userId: Joi.string().alphanum().length(24).required()})
+    .keys({ userId: Joi.string().alphanum().length(24).required() })
     .unknown(),
   params: Joi.object().keys({
     itemId: Joi.string().alphanum().length(24).required,
   }),
 });
-module.export = { validateSignup, validateSigin, validateCreateItem, validateDeleteItem }
+module.export = {
+  validateSignup,
+  validateSigin,
+  validateCreateItem,
+  validateItem,
+};

@@ -3,7 +3,7 @@ const express = require('express')
 const auth = require("../middlewares/auth")
 
 const router = express.Router()
-const { validateCreateItem, validateDeleteItem } = require("../middlewares/validation");
+const { validateCreateItem, validateItem } = require("../middlewares/validation");
 
 const {
   getClothingItems,
@@ -16,8 +16,8 @@ const {
 
 router.get('/',  getClothingItems)
 router.post('/', auth, validateCreateItem, createItem)
-router.delete('/:itemId', auth, validateDeleteItem, deleteItem)
-router.put('/:itemId/likes', auth, likeItem)
-router.delete('/:itemId/likes', auth, dislikeItem)
+router.delete('/:itemId', auth, validateItem, deleteItem)
+router.put('/:itemId/likes', auth, validateItem, likeItem)
+router.delete('/:itemId/likes', auth, validateItem, dislikeItem)
 
 module.exports = router
