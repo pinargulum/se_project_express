@@ -40,6 +40,9 @@ const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const owner = req.user._id;
   ClothingItem.findById(itemId)
+  .orFail(() => {
+    throw new NotFoundError("Item not found.");
+  })
     .then((item) => {
       if (String(item.owner) !== owner) {
         throw new ForbiddenError("You are not authorized to delete the item.");
