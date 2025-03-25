@@ -20,3 +20,7 @@ The **What to Wear** application is a weather-based suggestion app built with Re
 ### Other Tools
 - Weather API
 - Git & GitHub for version control
+### Domain Name
+wtwr.sitaci.com
+api.wtwr.sitaci.com
+www.wtwr.sitaci.com
