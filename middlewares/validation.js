@@ -46,11 +46,8 @@ const validateCreateItem = celebrate({
 });
 
 const validateItem = celebrate({
-  headers: Joi.object()
-    .keys({ userId: Joi.string().alphanum().length(24).required() })
-    .unknown(),
   params: Joi.object().keys({
-    itemId: Joi.string().alphanum().length(24).required,
+    itemId: Joi.string().alphanum().length(24).required(),
   }),
 });
 module.exports = {
