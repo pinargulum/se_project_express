@@ -1,5 +1,4 @@
 const express = require("express");
-require('dotenv').config();
 const { default: mongoose } = require("mongoose");
 const cors = require("cors");
 const helmet = require('helmet')
@@ -7,6 +6,8 @@ const { errors } = require('celebrate');
 const mainRouter = require("./routes/index");
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+
 
 const app = express();
 const { PORT = 3001 } = process.env;
