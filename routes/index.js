@@ -6,6 +6,8 @@ const userRauter = require("./users");
 
 const itemRauter = require("./clothingItems");
 
+const NotFoundError = require("../middlewares/errors/NotFoundError");
+
 const { login, createUser } = require("../controllers/usersController");
 
 const { NOT_FOUND } = require("../utils/constants");
@@ -18,7 +20,7 @@ router.post("/signin", validateSigin, login);
 router.post("/signup", validateSignup, createUser);
 
 router.use((req, res) => {
-  res.status(NOT_FOUND).send({ message: "Page not found" });
+ throw new NotFoundError("Page not found");
 });
 
 module.exports = router;
