@@ -1,8 +1,11 @@
 const ClothingItem = require("../models/clothingItems");
+
 const BadRequestError = require("../middlewares/errors/BadRequestError");
-const ConflictError = require("../middlewares/errors/ConflictError");
+
 const ForbiddenError = require("../middlewares/errors/ForbiddenError");
+
 const NotFoundError = require("../middlewares/errors/NotFoundError");
+
 const ServerError = require("../middlewares/errors/ServerError");
 
 const getClothingItems = (req, res, next) => {
