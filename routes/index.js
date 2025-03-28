@@ -10,8 +10,6 @@ const NotFoundError = require("../middlewares/errors/NotFoundError");
 
 const { login, createUser } = require("../controllers/usersController");
 
-const { NOT_FOUND } = require("../utils/constants");
-
 const { validateSignup, validateSigin } = require("../middlewares/validation");
 
 router.use("/users", userRauter);
@@ -19,7 +17,7 @@ router.use("/items", itemRauter);
 router.post("/signin", validateSigin, login);
 router.post("/signup", validateSignup, createUser);
 
-router.use((req, res) => {
+router.use((req, res, next) => {
  throw new NotFoundError("Page not found");
 });
 

@@ -5,10 +5,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const BadRequestError = require("../middlewares/errors/BadRequestError");
+
 const ConflictError = require("../middlewares/errors/ConflictError");
-const ForbiddenError = require("../middlewares/errors/ForbiddenError");
+
 const NotFoundError = require("../middlewares/errors/NotFoundError");
+
 const UnauthorizedError = require("../middlewares/errors/UnauthorizedError");
+
 const ServerError = require("../middlewares/errors/ServerError");
 
 const { JWT_SECRET } = require("../utils/config");

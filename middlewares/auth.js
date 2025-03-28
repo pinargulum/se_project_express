@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 
 const { JWT_SECRET } = require('../utils/config')
 
-const UnauthorizedError = require('../middlewares/errors/UnauthorizedError')
+const UnauthorizedError = require('./errors/UnauthorizedError')
 
 function auth (req, res, next) {
   const { authorization } = req.headers
